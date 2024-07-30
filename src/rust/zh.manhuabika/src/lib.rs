@@ -142,24 +142,19 @@ fn get_manga_listing(listing: Listing, page: i32) -> Result<MangaPageResult> {
 	let data = json.as_object()?;
 	let data = data.get("data").as_object()?;
 
-	let mangas;
-	let has_more;
-
 	if !rank_time.is_empty() || is_random {
-		let list = data.get("comics").as_array()?;
-		mangas = parser::parse_manga_list(list);
-		has_more = false;
-	} else {
-		let data = data.get("comics").as_object()?;
-		let list = data.get("docs").as_array()?;
-		mangas = parser::parse_manga_list(list);
-		has_more = parser::has_more(data);
-	};
+        	let list = data.get("comics").as_array()?;
+        	manga = parser::parse_manga_list(list); // Update manga list
+    	} else {
+        	let data = data.get("comics").as_object()?;
+        	let list = data.get("docs").as_array()?;
+        	manga = parser::parse_manga_list(list); // Update manga list
+    	};
 
-	Ok(MangaPageResult {
-		manga: mangas,
-		has_more,
-	})
+    	Ok(MangaPageResult {
+        	manga,
+        	has_more: parser::has_more(data),
+    	})
 }
 
 #[get_manga_details]

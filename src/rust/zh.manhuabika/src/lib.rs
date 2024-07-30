@@ -56,6 +56,9 @@ const FILTER_SORT: [&str; 4] = ["dd", "da", "ld", "vd"];
 
 #[get_manga_list]
 fn get_manga_list(filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
+	    // Reset manga list to empty vector
+	let mut manga = Vec::new();
+
 	let mut query = String::new();
 	let mut category = String::new();
 	let mut sort = String::from("dd");
@@ -105,6 +108,9 @@ fn get_manga_list(filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
 
 #[get_manga_listing]
 fn get_manga_listing(listing: Listing, page: i32) -> Result<MangaPageResult> {
+	// Reset manga list to empty vector
+    	let mut manga = Vec::new();
+	
 	let mut rank_time = String::new();
 	let mut is_random = false;
 	let mut category = String::new();

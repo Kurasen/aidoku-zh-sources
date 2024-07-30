@@ -158,33 +158,34 @@ fn get_manga_listing(listing: Listing, page: i32) -> Result<MangaPageResult> {
 
 #[get_manga_details]
 fn get_manga_details(id: String) -> Result<Manga> {
-	let url = helper::gen_manga_details_url(id);
-	let json = helper::get_json(url)?;
-	let data = json.as_object()?;
-	let data = data.get("data").as_object()?;
+    	let url = helper::gen_manga_details_url(id.clone());
+    	let json = helper::get_json(url)?;
+    	let data = json.as_object()?;
+    	let manga_data = data.get("data").as_object()?;
 
-	Ok(parser::parse_manga(data))
+    	Ok(parser::parse_manga(manga_data))
 }
 
 #[get_chapter_list]
 fn get_chapter_list(id: String) -> Result<Vec<Chapter>> {
-	let mut page = 1;
-	let url = helper::gen_chapter_list_url(id.clone(), page);
-	let json = helper::get_json(url)?;
-	let data = json.as_object()?;
-	let data = data.get("data").as_object()?;
-	let data = data.get("eps").as_object()?;
-	let list = data.get("docs").as_array()?;
-	let pages = data.get("pages").as_int()? as i32;
-	let mut chapters = parser::parse_chapter_list(id.clone(), list);
+    	let mut page = 1;
+   	let url = helper::gen_chapter_list_url(id.clone(), page);
+    	let json = helper::get_json(url)?;
+    	let data = json.as_object()?;
+    	let data = data.get("data").as_object()?;
+    	let eps_data = data.get("eps").as_object()?;
+    	let list = eps_data.get("docs").as_array()?;
 
-	while page < pages {
-		page += 1;
-		let next_page_chapters = get_chapter_list_by_page(id.clone(), page);
-		chapters = [chapters, next_page_chapters].concat();
-	}
+    	let pages = eps_data.get("pages").as_int()? as i32;
+    	let mut chapters = parser::parse_chapter_list(id.clone(), list);
 
-	Ok(chapters)
+    	while page < pages {
+        	page += 1;
+        	let next_page_chapters = get_chapter_list_by_page(id.clone(), page);
+        	chapters.extend(next_page_chapters);
+    	}
+
+   	Ok(chapters)
 }
 
 fn get_chapter_list_by_page(id: String, page: i32) -> Vec<Chapter> {

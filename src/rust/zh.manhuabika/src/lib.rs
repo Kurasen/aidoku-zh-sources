@@ -15,7 +15,7 @@ mod parser;
 
 const FILTER_CATEGORY: [&str; 37] = [
 	"",
-	"哔咔汉化",
+	"哔咔",
 	"全彩",
 	"長篇",
 	"同人",
